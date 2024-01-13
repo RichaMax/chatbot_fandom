@@ -28,11 +28,10 @@ async def get_links_from_page(client, url: str) -> list[str]:
         if not url.endswith(".png"):
             links.append(url)
 
-    if nav is not None:
-        if "Next page" in nav.text:
-            next_page = nav.find_all("a")[-1]
-            next_page_url = next_page.get("href")
+    if nav is not None and "Next page" in nav.text:
+        next_page = nav.find_all("a")[-1]
+        next_page_url = next_page.get("href")
 
-            links += await get_links_from_page(client, next_page_url)
+        links += await get_links_from_page(client, next_page_url)
 
     return links

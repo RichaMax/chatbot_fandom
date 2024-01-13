@@ -3,3 +3,5 @@
 .ruff_cache
 .venv
 .idea
+output
+__pycache__

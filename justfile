@@ -13,4 +13,4 @@ parse:
 
 install:
     poetry install
-    poetry run mypy --install-types
+    poetry run mypy --install-types .

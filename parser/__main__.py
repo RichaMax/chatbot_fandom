@@ -27,14 +27,9 @@ async def parse_fandom_wiki(domain: str):
 
     async with httpx.AsyncClient(base_url=base_url, limits=client_limits) as client:
         links = await get_all_page_links(client)
-        # links = links[:10]
-        # links = ["https://valheim.fandom.com/wiki/Ashlands"]
 
         failed_links = []
 
-        scrape_times = []
-        dl_times = []
-        transform_times = []
 
         start = time()
 
@@ -48,12 +43,9 @@ async def parse_fandom_wiki(domain: str):
 
             for link, task_result in zip(batch, result, strict=True):
                 match task_result:
-                    case Ok((dl_time, bs_time, transform_time)):
-                        dl_times.append(dl_time)
-                        scrape_times.append(bs_time)
-                        transform_times.append(transform_time)
+                    case Ok(_):
+                        pass
                     case Err(e):
-                        # print(e)
                         failed_links.append((link, e))
 
     total_time = time() - start
@@ -65,31 +57,21 @@ async def parse_fandom_wiki(domain: str):
     with open("error_dump.txt", "w") as f:
         f.write(error_dump)
 
-    print("Nbr of failed links : ", len(failed_links))
-    print("Nbr of successful links : ", len(scrape_times))
-    print("Nbr of total links : ", len(links))
-    print(f"Average scrape time : {sum(scrape_times) / len(scrape_times)}")
-    print(f"Average download time : {sum(dl_times) / len(dl_times)}")
-    print(f"Average transform time : {sum(transform_times) / len(transform_times)}")
+    print(f"{len(links) - len(failed_links)}✔ / {len(failed_links)}✘")
     print(f"Total time : {total_time}")
 
 
-async def try_handle_link(client, url: str, output_folder: str) -> Result[tuple[float, float, float], str]:
+async def try_handle_link(client, url: str, output_folder: str) -> Result[None, str]:
     try:
         return Ok(await handle_link(client, url, output_folder))
-    except Exception:
+    except Exception:  # noqa: BLE001
         return Err(traceback.format_exc())
 
 
-async def handle_link(client, url: str, output_folder: str) -> tuple[float, float, float]:
-    start = time()
+async def handle_link(client, url: str, output_folder: str) -> None:
     response = await client.get(url, follow_redirects=True)
-    html = response.text
-    dl_time = time() - start
-    scraper = ValheimPageScraper(html)
-    bs_time = time() - start - dl_time
+    scraper = ValheimPageScraper(response.text)
     result = scraper.scrape()
-    transform_time = time() - start - dl_time - bs_time
 
     page_name = url.split("wiki/")[-1].replace("/", "-")
 
@@ -98,4 +80,4 @@ async def handle_link(client, url: str, output_folder: str) -> tuple[float, floa
     with open(filepath, "w") as f:
         f.write(result)
 
-    return dl_time, bs_time, transform_time
+    return None
