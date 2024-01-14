@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import bs4
 
 
-def parse_element(html_element, indentation=0):
+def parse_element(html_element: bs4.element.Tag, indentation: int = 0) -> str:
     if html_element.name == "table":
         return extract_table(html_element)
     if html_element.name and html_element.name.startswith("h"):
@@ -24,7 +24,7 @@ def parse_element(html_element, indentation=0):
     return full_text
 
 
-def ignore_child(child_element):
+def ignore_child(child_element: bs4.element.Tag) -> bool:
     if child_element.name == "div":
         if child_element.get("id", "") == "toc":
             return True
@@ -35,15 +35,15 @@ def ignore_child(child_element):
     return False
 
 
-def extract_a(a_html):
+def extract_a(a_html: bs4.element.Tag) -> str:
     return format_raw_text(a_html)
 
 
-def format_raw_text(html_element):
+def format_raw_text(html_element: bs4.element.Tag) -> str:
     return html_element.get_text().replace("\n", "")
 
 
-def extract_cell(html_cell):
+def extract_cell(html_cell: bs4.element.Tag) -> str:
     if hasattr(html_cell, "children"):
         span_ = html_cell.find("span", class_="mw-collapsible-toggle")
         if span_:
@@ -56,11 +56,11 @@ def extract_cell(html_cell):
     return parse_element(html_cell)
 
 
-def visible_cell(html_cell):
+def visible_cell(html_cell: bs4.element.Tag) -> bool:
     return "display:none" not in html_cell.get("style", "")
 
 
-def extract_table(html_table):
+def extract_table(html_table: bs4.element.Tag) -> str:
     # The tables used for the "Article in Progress" warning do not have a class
     # The tables at the end of articles that are not used for now have both
     # the "mw-collapsible" and "wikitable" classes
@@ -81,7 +81,7 @@ def extract_table(html_table):
     return table_str
 
 
-def extract_list(list_html, indentation=0):
+def extract_list(list_html: bs4.element.Tag, indentation: int = 0) -> str:
     html_lis = list_html.find_all("li", recursive=False)
     list_str = "\n"
     list_type = list_html.name
@@ -90,16 +90,16 @@ def extract_list(list_html, indentation=0):
         if "mw-empty-elt" in li.get("class", []):
             continue
         if list_type == "ol":
-            li_str = f"{indent_str}{i}. {parse_element(li, indentation+1).strip()}\n"
+            li_str = f"{indent_str}{i}. {parse_element(li, indentation + 1).strip()}\n"
         else:
             # ul
-            li_str = f"{indent_str}* {parse_element(li, indentation+1).strip()}\n"
+            li_str = f"{indent_str}* {parse_element(li, indentation + 1).strip()}\n"
         list_str += li_str
 
     return list_str
 
 
-def extract_header(header_html):
+def extract_header(header_html: bs4.element.Tag) -> str:
     if "pi-title" in header_html.get("class", []):
         return ""
     header_lvl = int(header_html.name[1])
@@ -117,7 +117,7 @@ class SideSectionScraper(Scraper):
     def __init__(self, side_html: bs4.element.Tag):
         self.side_html = side_html
 
-    def scrape(self):
+    def scrape(self) -> str:
         children = self.side_html.findChildren(recursive=False)
 
         result = ""
@@ -127,7 +127,7 @@ class SideSectionScraper(Scraper):
 
         return result
 
-    def scrape_element(self, element_html):
+    def scrape_element(self, element_html: bs4.element.Tag) -> str:
         classes = element_html.get("class", [])
         if "pi-group" in classes:
             return self.scrape_group(element_html)
@@ -145,11 +145,11 @@ class SideSectionScraper(Scraper):
             # print("-----------------" * 5)
             return ""
 
-    def scrape_title(self, title_html):
+    def scrape_title(self, title_html: bs4.element.Tag) -> str:
         # print("Scraping title")
         return "# " + title_html.text.strip() + "  \n"
 
-    def scrape_data(self, data_html):
+    def scrape_data(self, data_html: bs4.element.Tag) -> str:
         # print("Scraping data")
         # print(data_html)
         result = ""
@@ -167,11 +167,11 @@ class SideSectionScraper(Scraper):
 
         return result + "  \n"
 
-    def scrape_header(self, header_html):
+    def scrape_header(self, header_html: bs4.element.Tag) -> str:
         # print("Scraping header")
         return "## " + header_html.text.strip() + "  \n"
 
-    def scrape_panel(self, panel_html):
+    def scrape_panel(self, panel_html: bs4.element.Tag) -> str:
         # print("Scraping panel")
         # print(panel_html)
         children = panel_html.findChildren(recursive=False)
@@ -180,7 +180,7 @@ class SideSectionScraper(Scraper):
         # print("-----------------" * 5)
         return ""
 
-    def scrape_group(self, group_html):
+    def scrape_group(self, group_html: bs4.element.Tag) -> str:
         result = ""
         # print("Scraping group")
         # print(group_html)

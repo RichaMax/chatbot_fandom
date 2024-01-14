@@ -11,7 +11,7 @@ class ValheimPageScraper:
         self.page_content = ""
         self.metadata = {}
 
-    def scrape_header(self, header_html):
+    def scrape_header(self, header_html: bs4.element.Tag) -> None:
         top_header = header_html.find("div", class_="page-header__categories")
         if top_header is not None:
             self.page_content += parse_element(top_header)
@@ -21,14 +21,14 @@ class ValheimPageScraper:
         self.title = header_title.text.strip()
         self.page_content += f"\n# {self.title}\n"
 
-    def scrape_side_section(self, side_html: bs4.element.Tag):
+    def scrape_side_section(self, side_html: bs4.element.Tag) -> None:
         if not side_html:
             return
 
         scraper = SideSectionScraper(side_html)
         self.page_content += scraper.scrape()
 
-    def scrape_center_section(self, center_html):
+    def scrape_center_section(self, center_html: bs4.element.Tag) -> None:
         section_text = parse_element(center_html)
         self.page_content += section_text
 
