@@ -11,10 +11,13 @@ beautifulsoup4 = "4.12"
 httpx = "0.26.0"
 tqdm = "4.66"
 result = "0.16.0"
+pydantic = "^2.5.3"
+click = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
 ruff = "^0.1.13"
+mypy = "^1.8.0"
 types-beautifulsoup4 = "4.12"
 types-requests = "2.31"
 types-tqdm = "4.66"
@@ -24,7 +27,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-parse = "parser.__main__:main"
+parse = "parser.main:entrypoint"
 
 [tool.ruff]
 line-length = 120
@@ -63,6 +66,7 @@ ignore = [
     # 'ruff format' recommends to turn these off to avoid conflicts:
     "D206",   # https://docs.astral.sh/ruff/rules/indent-with-spaces/#indent-with-spaces-d206
     "ISC001", # https://docs.astral.sh/ruff/rules/single-line-implicit-string-concatenation/
+    "T201",
 ]
 
 [tool.ruff.pydocstyle]
@@ -70,6 +74,7 @@ convention = "pep257"
 
 [tool.mypy]
 python_version = "3.11"
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = ["result"]

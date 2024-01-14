@@ -1,8 +1,3 @@
-from abc import ABC, abstractmethod
-
-import bs4
-
-
 def parse_element(html_element, indentation=0):
     if html_element.name == "table":
         return extract_table(html_element)
@@ -90,10 +85,10 @@ def extract_list(list_html, indentation=0):
         if "mw-empty-elt" in li.get("class", []):
             continue
         if list_type == "ol":
-            li_str = f"{indent_str}{i}. {parse_element(li, indentation+1).strip()}\n"
+            li_str = f"{indent_str}{i}. {parse_element(li, indentation + 1).strip()}\n"
         else:
             # ul
-            li_str = f"{indent_str}* {parse_element(li, indentation+1).strip()}\n"
+            li_str = f"{indent_str}* {parse_element(li, indentation + 1).strip()}\n"
         list_str += li_str
 
     return list_str
@@ -105,90 +100,3 @@ def extract_header(header_html):
     header_lvl = int(header_html.name[1])
     header_text = format_raw_text(header_html.find("span", class_="mw-headline"))
     return f"\n\n{'#' * header_lvl} {header_text}\n"
-
-
-class Scraper(ABC):
-    @abstractmethod
-    def scrape(self) -> str:
-        ...
-
-
-class SideSectionScraper(Scraper):
-    def __init__(self, side_html: bs4.element.Tag):
-        self.side_html = side_html
-
-    def scrape(self):
-        children = self.side_html.findChildren(recursive=False)
-
-        result = ""
-
-        for child in children:
-            result += self.scrape_element(child)
-
-        return result
-
-    def scrape_element(self, element_html):
-        classes = element_html.get("class", [])
-        if "pi-group" in classes:
-            return self.scrape_group(element_html)
-        elif "pi-panel" in classes:
-            return self.scrape_panel(element_html)
-        elif "pi-header" in classes:
-            return self.scrape_header(element_html)
-        elif "pi-data" in classes:
-            return self.scrape_data(element_html)
-        elif "pi-title" in classes:
-            return self.scrape_title(element_html)
-        else:
-            # print("Scraping unknown element")
-            # print(element_html)
-            # print("-----------------" * 5)
-            return ""
-
-    def scrape_title(self, title_html):
-        # print("Scraping title")
-        return "# " + title_html.text.strip() + "  \n"
-
-    def scrape_data(self, data_html):
-        # print("Scraping data")
-        # print(data_html)
-        result = ""
-        children = data_html.findChildren(recursive=False)
-        result += children[0].text.strip() + ": "
-        value_children = children[1].findChildren(recursive=False)
-        if not value_children:
-            return result + children[1].text.strip() + "  \n"
-        txt_children = []
-        for value_child in value_children:
-            if value_child.name == "a":
-                txt_children.append(value_child.text.strip())
-
-        result += ", ".join(txt_children)
-
-        return result + "  \n"
-
-    def scrape_header(self, header_html):
-        # print("Scraping header")
-        return "## " + header_html.text.strip() + "  \n"
-
-    def scrape_panel(self, panel_html):
-        # print("Scraping panel")
-        # print(panel_html)
-        children = panel_html.findChildren(recursive=False)
-        # TODO : scrape panel
-        # print([child.name for child in children])
-        # print("-----------------" * 5)
-        return ""
-
-    def scrape_group(self, group_html):
-        result = ""
-        # print("Scraping group")
-        # print(group_html)
-        children = group_html.findChildren(recursive=False)
-        # print(f"Children : [child.name for child in children]")
-        # print("-----------------" * 5)
-        for child in children:
-            # print("Scraping child")
-            # print(child)
-            result += self.scrape_element(child)
-        return result

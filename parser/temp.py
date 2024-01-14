@@ -1,37 +1,43 @@
-from bs4 import BeautifulSoup
+from pydantic.dataclasses import dataclass
 
 
-async def get_all_page_links(client) -> list[str]:
-    """Returns a list of all links to pages on the fandom wiki."""
-    return await get_links_from_page(client, "/wiki/Special:AllPages")
+@dataclass
+class Ref:
+    # we will have issues with redirects there
+    link: str
 
 
-async def get_links_from_page(client, url: str) -> list[str]:
-    response = await client.get(url)
-    html = response.text
-    soup = BeautifulSoup(html, "html.parser")
+@dataclass
+class Text:
+    content: str
 
-    nav = soup.find("div", class_="mw-allpages-nav")
-    body = soup.find_all("div", class_="mw-allpages-body")
 
-    assert len(body) == 1
+@dataclass
+class Line:
+    content: list[Text | Ref]
 
-    body = body[0]
 
-    links = []
+@dataclass
+class Paragraph:
+    lines: list[Line]
 
-    for page in body.find_all("li"):
-        a = page.find("a")
-        relative_url = a.get("href")
-        url = relative_url
 
-        if not url.endswith(".png"):
-            links.append(url)
+@dataclass
+class TableRow:
+    cells: list[Text | Ref]
 
-    if nav is not None and "Next page" in nav.text:
-        next_page = nav.find_all("a")[-1]
-        next_page_url = next_page.get("href")
 
-        links += await get_links_from_page(client, next_page_url)
+@dataclass
+class Table:
+    rows: list[TableRow]
 
-    return links
+
+PageContent = list[Paragraph | Table]
+
+
+@dataclass
+class Page:
+    link: str
+    categories: list[str]
+    title: str
+    content: PageContent

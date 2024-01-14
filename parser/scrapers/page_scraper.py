@@ -1,30 +1,30 @@
 import bs4
-from bs4 import BeautifulSoup
 
-from parser.scrapers.side_section_scraper import SideSectionScraper
+from parser.utils_scraper import parse_element
 
-from .utils_scraper import parse_element
+from .scraper import Scraper
+from .side_section_scraper import SideSectionScraper
 
 
-class ValheimPageScraper:
-    def __init__(self, html):
-        self.page_soup = BeautifulSoup(html, "html.parser")
+class PageScraper(Scraper):
+    def __init__(self, html: str):
+        self.page_soup = bs4.BeautifulSoup(html, "html.parser")
         self.title = ""
         self.page_content = ""
-        self.metadata = {}
+        self.metadata: dict[str, list[str]] = {}
 
-    def scrape_header(self, header_html):
+    def scrape_header(self, header_html: bs4.element.Tag | None):
         top_header = header_html.find("div", class_="page-header__categories")
         if top_header is not None:
-            self.page_content += parse_element(top_header)
+            # self.page_content += parse_element(top_header)
             self.metadata["categories"] = [a.text for a in top_header.find_all("a")]
 
         header_title = header_html.find("h1", class_="page-header__title")
         self.title = header_title.text.strip()
         self.page_content += f"\n# {self.title}\n"
 
-    def scrape_side_section(self, side_html: bs4.element.Tag):
-        if not side_html:
+    def scrape_side_section(self, side_html: bs4.element.Tag | None):
+        if side_html is None:
             return
 
         scraper = SideSectionScraper(side_html)
