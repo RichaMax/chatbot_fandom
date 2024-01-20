@@ -8,8 +8,8 @@ format:
 test:
     poetry run pytest tests
 
-parse:
-    poetry run parse 
+parse *ARGS:
+    poetry run parse {{ARGS}}
 
 install:
     poetry install
