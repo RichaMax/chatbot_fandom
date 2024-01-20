@@ -5,6 +5,7 @@ from pydantic.dataclasses import dataclass
 class Ref:
     # we will have issues with redirects there
     link: str
+    text: str
 
 
 @dataclass
@@ -37,7 +38,13 @@ PageContent = list[Paragraph | Table]
 
 @dataclass
 class Page:
-    link: str
     categories: list[str]
     title: str
     content: PageContent
+
+
+@dataclass
+class PageWithLink:
+    link: str
+    # page: Page
+    page: str

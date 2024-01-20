@@ -1,16 +1,16 @@
-import httpx
 from bs4 import BeautifulSoup
 
+from parser.client import FandomClient
 
-async def get_all_page_links(client: httpx.AsyncClient) -> list[str]:
+
+async def get_all_page_links(client: FandomClient) -> list[str]:
     """Returns a list of all links to pages on the fandom wiki."""
     return await get_links_from_page(client, "/wiki/Special:AllPages")
 
 
-async def get_links_from_page(client: httpx.AsyncClient, url: str) -> list[str]:
-    response = await client.get(url)
-    html = response.text
-    soup = BeautifulSoup(html, "html.parser")
+async def get_links_from_page(client: FandomClient, url: str) -> list[str]:
+    result = await client.get_html(url)
+    soup = BeautifulSoup(result.html, "html.parser")
 
     nav = soup.find("div", class_="mw-allpages-nav")
     body = soup.find_all("div", class_="mw-allpages-body")[0]

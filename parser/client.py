@@ -1,6 +1,13 @@
 import httpx
+from pydantic.dataclasses import dataclass
 
 from .urls import get_domain_url
+
+
+@dataclass
+class HtmlResult:
+    url: str
+    html: str
 
 
 class FandomClient:
@@ -10,18 +17,18 @@ class FandomClient:
             max_keepalive_connections=None, max_connections=200, keepalive_expiry=5
         )
         self.client = httpx.AsyncClient(base_url=domain_url, limits=client_limits)
-        self.redirects: dict[str, str] = {}
+        # self.redirects: dict[str, str] = {}
 
     async def close(self) -> None:
         await self.client.aclose()
 
-    async def get_html(self, url: str) -> str:
-        response = await self.client.get(url)
+    async def get_html(self, url: str) -> HtmlResult:
+        response = await self.client.get(url, follow_redirects=True)
 
-        redirects = response.history
+        # redirects = response.history
 
-        if redirects:
-            for redirect in redirects:
-                self.redirects[redirect.url.path] = response.url.path
+        # if redirects:
+        #     for redirect in redirects:
+        #         self.redirects[redirect.url.path] = response.url.path
 
-        return response.text
+        return HtmlResult(url=response.url.path, html=response.text)

@@ -1,109 +1,104 @@
 import asyncio
 import traceback
 from pathlib import Path
-from time import time
 
 import click
-import httpx
-from result import Err, Ok, Result
 from tqdm import tqdm
 
 from .client import FandomClient
 from .page_lister import get_all_page_links
-from .temp import Page
+from .scrapers.page_scraper import PageScraper
+from .temp import PageWithLink
 from .urls import get_sanitized_page_name_from_url
-from .valheim_page_scraper import ValheimPageScraper
 
 BATCH_SIZE = 50
 
 
 @click.command()
 @click.option("--url", default=None, help="The url to parse")
-@click.option("--all", "domain", default=None, help="Parse all pages from the given domain")
+@click.option(
+    "--all", "domain", default=None, help="Parse all pages from the given domain"
+)
 def entrypoint(url: str | None, domain: str | None) -> None:
     if url is None and not domain:
         click.echo("Please provide a url or use the --all flag")
         return
 
     if domain:
-        result = asyncio.run(parse_fandom_wiki(domain))
+        result = asyncio.run(parse_wiki(domain))
     elif url:
         raise NotImplementedError("TODO: Implement parsing a single page")
-    
+
+    pages_output_dir = Path(f"output/{domain}/pages")
+    pages_output_dir.mkdir(parents=True, exist_ok=True)
+
+    for page in result:
+        filename = get_sanitized_page_name_from_url(page.link) + ".md"
+
+        with open(pages_output_dir / filename, "w") as f:
+            f.write(page.page)
+
     # check for errors
-    
+
     # Choose renderer
 
     # Pass result to renderer
 
-async def parse_wiki(domain: str) -> list[Page]:
+
+async def parse_wiki(domain: str) -> list[PageWithLink]:
     client = FandomClient(domain)
 
-    return []
+    links = await get_all_page_links(client)
 
-async def parse_fandom_wiki(domain: str):
-    output_dir = Path(f"output/{domain}")
-    output_dir.mkdir(parents=True, exist_ok=True)
+    seen_urls = set()
 
-    pages_output_dir = output_dir / "pages"
+    pages = []
+    errors = []
+    redirects = []
 
-    base_url = f"https://{domain}.fandom.com"
+    batches = [links[i : i + BATCH_SIZE] for i in range(0, len(links), BATCH_SIZE)]
+    pbar = tqdm(batches)
 
-    client_limits = httpx.Limits(max_keepalive_connections=None, max_connections=200, keepalive_expiry=5)
+    for batch in pbar:
+        tasks = []
+        for link in batch:
+            tasks.append(client.get_html(link))
 
-    async with httpx.AsyncClient(base_url=base_url, limits=client_limits) as client:
-        links = await get_all_page_links(client)
-        links = links[:10]
+        html_pages = await asyncio.gather(*tasks)
 
-        click.echo(f"Found {len(links)} pages")
+        nbr_pages = len(html_pages)
 
-        failed_links = []
+        # filter html pages for redirects
+        html_pages = [page for page in html_pages if page.url not in seen_urls]
 
-        start = time()
+        redirects.extend(list(range(nbr_pages - len(html_pages))))
 
-        batches = [links[i : i + BATCH_SIZE] for i in range(0, len(links), BATCH_SIZE)]
-        for batch in tqdm(batches):
-            tasks = []
-            for link in batch:
-                tasks.append(try_handle_link(client, link, pages_output_dir))
+        seen_urls.update({page.url for page in html_pages})
 
-            result = await asyncio.gather(*tasks)
+        for page in html_pages:
+            try:
+                scraper = PageScraper(page.html)
+                pages.append(PageWithLink(page=scraper.scrape(), link=page.url))
+            except Exception:  # noqa: BLE001
+                error_trace = traceback.format_exc()
+                errors.append((page.url, error_trace))
 
-            for link, task_result in zip(batch, result, strict=True):
-                match task_result:
-                    case Ok(_):
-                        pass
-                    case Err(e):
-                        failed_links.append((link, e))
-
-    total_time = time() - start
-
-    if failed_links:
-        error_dump = "\n-------------------------------------------------------------------------\n".join(
-            [f"{link} : {error}" for link, error in failed_links]
+        pbar.set_postfix(
+            {
+                "ignored redirects": len(redirects),
+                "total": len(pages) + len(errors),
+                "parsed": len(pages),
+            }
         )
 
-        with open(output_dir / "error_dump.txt", "w") as f:
+    await client.close()
+
+    if errors:
+        error_dump = "\n-------------------------------------------------------------------------\n".join(
+            [f"{link} : {error}" for link, error in errors]
+        )
+
+        with open("error_dump.txt", "w") as f:
             f.write(error_dump)
 
-    click.echo(f"{len(links) - len(failed_links)}✔ / {len(failed_links)}✘")
-    click.echo(f"Total time : {total_time}")
-
-
-async def try_handle_link(client, url: str, output_folder: Path) -> Result[None, str]:
-    try:
-        await handle_link(client, url, output_folder)
-        return Ok(None)
-    except Exception:  # noqa: BLE001
-        return Err(traceback.format_exc())
-
-
-async def handle_link(client, url: str, output_folder: Path) -> None:
-    response = await client.get(url, follow_redirects=True)
-    scraper = ValheimPageScraper(response.text)
-    result = scraper.scrape()
-
-    page_filename = get_sanitized_page_name_from_url(url)
-
-    with open(output_folder / page_filename, "w") as f:
-        f.write(result)
+    return pages
