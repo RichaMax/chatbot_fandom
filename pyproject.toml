@@ -5,6 +5,11 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 packages = [{ include = "parser" }]
 
+[[tool.poetry.source]]
+priority="explicit"
+name = "pytorch-cu118"
+url = "https://download.pytorch.org/whl/cu118"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 beautifulsoup4 = "4.12"
@@ -13,7 +18,7 @@ tqdm = "4.66"
 result = "0.16.0"
 langchain = "*"
 InstructorEmbedding = "*"
-torch = '*'
+torch = {version = "*", source = "pytorch-cu118"}
 sentence-transformers = "*"
 faiss-cpu = "*"
 pydantic = "^2.5.3"
