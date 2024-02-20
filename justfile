@@ -1,16 +1,7 @@
-lint:
-    - poetry run ruff  --fix .
-    - poetry run mypy .
+set dotenv-load
 
-format:
-    poetry run ruff format . 
+@up:
+    docker-compose up 
 
-test:
-    poetry run pytest tests
-
-parse *ARGS:
-    poetry run parse {{ARGS}}
-
-install:
-    poetry install
-    poetry run mypy --install-types .
+@down:
+    docker-compose down

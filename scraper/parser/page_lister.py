@@ -15,10 +15,6 @@ async def get_links_from_page(client: FandomClient, url: str) -> list[str]:
     nav = soup.find("div", class_="mw-allpages-nav")
     body = soup.find_all("div", class_="mw-allpages-body")[0]
 
-    # assert len(body) == 1
-
-    # body = body[0]
-
     links = []
 
     for page in body.find_all("li"):
