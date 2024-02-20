@@ -2,8 +2,8 @@ FROM python:3.12
 
 WORKDIR /app
 
-RUN groupadd --gid 1000 worker && useradd --uid 1000 --gid worker -ms /bin/bash worker
-USER worker
+# RUN groupadd --gid 1000 worker && useradd --uid 1000 --gid worker -ms /bin/bash worker
+# USER worker
 
 ENV RYE_HOME="/opt/rye"
 ENV PATH="$RYE_HOME/shims:$PATH"
