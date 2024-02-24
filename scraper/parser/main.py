@@ -35,7 +35,7 @@ def entrypoint(url: str | None, domain: str | None) -> None:
     for page in result:
         filename = get_sanitized_page_name_from_url(page.link) + ".md"
 
-        with open(pages_output_dir / filename, "w") as f:
+        with open(pages_output_dir / filename, "w", encoding="utf-8") as f:
             f.write(page.page)
 
     # check for errors
