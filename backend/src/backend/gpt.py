@@ -19,8 +19,8 @@ class GPT:
             ]
         )).choices[0].message.content
     
-    async def embed(self, text: str) -> str:
+    async def embed(self, text: str) -> list[float]:
         return await self.openai.embeddings.create(
-            engine="text-davinci-003",
-            inputs=text
-        )
+            model="text-embedding-3-small",
+            input=text
+        ).data[0].embedding

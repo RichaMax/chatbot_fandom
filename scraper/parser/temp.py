@@ -40,11 +40,12 @@ PageContent = list[Paragraph | Table]
 class Page:
     categories: list[str]
     title: str
-    content: PageContent
+    # content: PageContent
+    content: str
 
 
 @dataclass
 class PageWithLink:
     link: str
-    # page: Page
-    page: str
+    page: Page
+    # page: str
