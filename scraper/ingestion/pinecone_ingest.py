@@ -35,7 +35,7 @@ if index_name not in pc.list_indexes().names():
     # if does not exist, create index
     pc.create_index(
         index_name,
-        dimension=3072,  # dimensionality of text-embed-3-small
+        dimension=1536,  # dimensionality of text-embed-3-small
         metric='dotproduct',
         spec=spec
     )
@@ -52,17 +52,22 @@ index.describe_index_stats()
 
 
 result = asyncio.run(parse_wiki("valheim"))
-for r in result:
+for r in tqdm(result):
     meta = {"title": r.page.title,
             "categories": r.page.categories,
             "url": r.link}
-    page_embeddings = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=r.page.content).data[0].embedding
-    page_data = {"id": hashlib.sha256(r.page.title.encode('utf-8')).hexdigest(),
-                 "values": page_embeddings,
-                 "metadata": meta}
-    index.upsert([page_data])
+    try:
+        page_embeddings = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=r.page.content).data[0].embedding
+        page_data = {"id": hashlib.sha256(r.page.title.encode('utf-8')).hexdigest(),
+                    "values": page_embeddings,
+                    "metadata": meta}
+        index.upsert([page_data])
+    except Exception as e:
+        print(e)
+        print(meta)
+        print("--------------------------------------")
 
 # load the first 1K rows of the TREC dataset
 # trec = load_dataset('trec', split='train[:1000]')

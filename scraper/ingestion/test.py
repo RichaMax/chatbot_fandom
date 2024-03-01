@@ -12,23 +12,26 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
-client = OpenAI(
-    api_key=settings.openai_api_key
-)  # get API key from platform.openai.com
+# client = OpenAI(
+#     api_key=settings.openai_api_key
+# )  # get API key from platform.openai.com
 
-MODEL = "text-embedding-3-small"
+# MODEL = "text-embedding-3-small"
 
 result = asyncio.run(parse_wiki("valheim"))
+all_len = []
 for r in result:
-    meta = {"title": r.page.title,
-            "categories": r.page.categories,
-            "url": r.link}
-    print(meta)
+    # meta = {"title": r.page.title,
+    #         "categories": r.page.categories,
+    #         "url": r.link}
+    # print(meta)
     content = r.page.content
-    print(content)
-    page_embeddings = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=content).data[0].embedding
-    print(page_embeddings)
-    print(hashlib.sha256(r.page.title.encode('utf-8')).hexdigest())
-    break
+    all_len.append(len(content))
+    # print(content)
+    # page_embeddings = client.embeddings.create(
+    #     model="text-embedding-3-small",
+    #     input=content).data[0].embedding
+    # print(page_embeddings)
+    # print(hashlib.sha256(r.page.title.encode('utf-8')).hexdigest())
+    # break
+print(sorted(all_len))
