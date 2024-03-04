@@ -1,7 +1,7 @@
 import bs4
 
-from parser.utils_scraper import parse_element
-from parser.temp import Page
+from ingest.parser.utils_scraper import parse_element
+from ingest.ingest_models import ScrappedPage
 
 from .scraper import Scraper
 from .side_section_scraper import SideSectionScraper
@@ -45,4 +45,4 @@ class PageScraper(Scraper):
         self.scrape_side_section(page_side)
         self.scrape_center_section(page_center_full)
 
-        return Page(content=self.page_content, title=self.title, categories=self.metadata["categories"])
+        return ScrappedPage(content=[], str_content=self.page_content, title=self.title, categories=self.metadata["categories"])

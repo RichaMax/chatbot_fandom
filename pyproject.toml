@@ -1,0 +1,6 @@
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["result", "tqdm.*", "pinecone", "pymongo"]
+ignore_missing_imports = true

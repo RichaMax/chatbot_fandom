@@ -25,10 +25,4 @@ class FandomClient:
     async def get_html(self, url: str) -> HtmlResult:
         response = await self.client.get(url, follow_redirects=True)
 
-        # redirects = response.history
-
-        # if redirects:
-        #     for redirect in redirects:
-        #         self.redirects[redirect.url.path] = response.url.path
-
         return HtmlResult(url=response.url.path, html=response.text)

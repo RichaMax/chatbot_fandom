@@ -14,8 +14,9 @@ function App() {
   const [chatInput, setChatInput] = useState<string>("");
 
   const handleNewQuestion = async (question: string) => {
-    const response = await axios.post("http://localhost:8000/ask", {
+    const response = await axios.post("http://localhost:8013/ask", {
       question: question,
+      game: game,
     });
 
     const newRecord: ChatRecord = {

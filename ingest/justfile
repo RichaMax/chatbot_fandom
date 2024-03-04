@@ -1,3 +1,5 @@
+set dotenv-load
+
 lint:
     - poetry run ruff  --fix .
     - poetry run mypy .

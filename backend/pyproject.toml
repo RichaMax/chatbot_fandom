@@ -9,13 +9,16 @@ dependencies = [
     "fastapi>=0.109.2",
     "uvicorn>=0.27.1",
     "openai>=1.12.0",
+    "pinecone-client>=3.1.0",
+    "pydantic-settings>=2.2.1",
+    "pymongo>=4.6.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
 
 [tool.rye.scripts]
-start-dev = "uvicorn --app-dir src --host 0.0.0.0 --factory backend.app:create_app --reload"
-start = "uvicorn --app-dir src --host 0.0.0.0 --factory backend.app:create_app"
+start-dev = "uvicorn --app-dir src --host 0.0.0.0 --port 8013 --factory backend.app:create_app --reload"
+start = "uvicorn --app-dir src --host 0.0.0.0 -port 8013 --factory backend.app:create_app"
 
 [build-system]
 requires = ["hatchling"]

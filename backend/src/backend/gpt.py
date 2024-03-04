@@ -20,7 +20,7 @@ class GPT:
         )).choices[0].message.content
     
     async def embed(self, text: str) -> list[float]:
-        return await self.openai.embeddings.create(
+        return (await self.openai.embeddings.create(
             model="text-embedding-3-small",
             input=text
-        ).data[0].embedding
+        )).data[0].embedding

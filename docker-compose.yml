@@ -10,15 +10,16 @@ services:
       - 5173:5173
   
   backend:
-    # volumes:
-    #   - ./backend:/app
+    volumes:
+      - ./backend:/app
     build:
       context: ./backend/
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - 8013:8013
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
   
   cache:
     image: redis:7.2
@@ -29,5 +30,5 @@ services:
     image: mongodb/mongodb-community-server:latest
     ports:
       - 27017:27017
-    volumes:
-      - ./databases/mongodb/data:/data/db
+    # volumes:
+    #   - databases/mongodb/data:/data/db
