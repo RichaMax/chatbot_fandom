@@ -6,5 +6,7 @@ class Mongo:
         self.client = MongoClient("mongodb")
 
     def get_chunk(self, game: str, chunk_id: str):
-        result = self.client[game]["pages"].find_one({"chunks.id": chunk_id}, {"chunks.$": 1})
-        print(result)
+        result = self.client[game]["pages"].find_one(
+            {"chunks.id": chunk_id}, {"chunks.$": 1}
+        )
+        return result["chunks"][0]

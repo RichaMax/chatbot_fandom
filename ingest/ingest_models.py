@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
+
 @dataclass
 class Ref:
     # we will have issues with redirects there
@@ -35,10 +36,12 @@ class Table:
 
 PageContent = list[Paragraph | Table]
 
+
 class PageMetadata(BaseModel):
     title: str
     url: str
     categories: list[str]
+
 
 class ScrappedPage(BaseModel):
     title: str
@@ -46,14 +49,17 @@ class ScrappedPage(BaseModel):
     content: PageContent
     str_content: str
 
+
 class Page(BaseModel):
     metadata: PageMetadata
     content: PageContent
     str_content: str
 
+
 class Chunk(BaseModel):
     id: str
     content: str
+
 
 class ChunkedPage(BaseModel):
     chunks: list[Chunk]
@@ -62,6 +68,7 @@ class ChunkedPage(BaseModel):
 
 class EmbeddedChunk(Chunk):
     embedding: list[float]
+
 
 class EmbeddedPage(BaseModel):
     metadata: PageMetadata

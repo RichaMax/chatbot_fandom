@@ -45,4 +45,9 @@ class PageScraper(Scraper):
         self.scrape_side_section(page_side)
         self.scrape_center_section(page_center_full)
 
-        return ScrappedPage(content=[], str_content=self.page_content, title=self.title, categories=self.metadata["categories"])
+        return ScrappedPage(
+            content=[],
+            str_content=self.page_content,
+            title=self.title,
+            categories=self.metadata["categories"],
+        )

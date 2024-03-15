@@ -31,6 +31,10 @@ httpx==0.27.0
 idna==3.6
     # via anyio
     # via httpx
+markdown-it-py==3.0.0
+    # via rich
+mdurl==0.1.2
+    # via markdown-it-py
 openai==1.13.3
 pinecone-client==3.1.0
 pydantic==2.6.3
@@ -39,10 +43,13 @@ pydantic==2.6.3
 pydantic-core==2.16.3
     # via pydantic
 pydantic-settings==2.2.1
+pygments==2.17.2
+    # via rich
 pymongo==4.6.2
 python-dotenv==1.0.1
     # via pydantic-settings
 result==0.16.1
+rich==13.7.1
 sniffio==1.3.1
     # via anyio
     # via httpx

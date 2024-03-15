@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class ChunkMetadata(BaseModel):
     title: str
     categories: list[str]

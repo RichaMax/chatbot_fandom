@@ -7,31 +7,58 @@ import valheim from "./assets/valheim.png";
 import vrising from "./assets/vrising.png";
 import { GameSelector } from "./components/GameSelector";
 import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { v4 as uuidv4 } from "uuid";
+
+const getOrSetSessionId = () => {
+  if (window.sessionStorage.getItem("sessionId") === null) {
+    window.sessionStorage.setItem("sessionId", uuidv4());
+  }
+  return window.sessionStorage.getItem("sessionId");
+};
 
 function App() {
   const [game, setGame] = useState<string>("valheim");
-  const [chatRecords, setChatRecords] = useState<ChatRecords>([]);
   const [chatInput, setChatInput] = useState<string>("");
 
-  const handleNewQuestion = async (question: string) => {
-    const response = await axios.post("http://localhost:8013/ask", {
-      question: question,
-      game: game,
-    });
+  const queryClient = useQueryClient();
 
-    const newRecord: ChatRecord = {
-      question: question,
-      answer: response.data.answer,
-      timestamp: Date.now(),
-    };
+  const sessionId = getOrSetSessionId();
 
-    setChatRecords([...chatRecords, newRecord]);
-  };
+  const askQuestionMutation = useMutation({
+    mutationFn: async ({ question }: { question: string }) => {
+      return await axios.post(
+        "http://localhost:8013/ask",
+        {
+          question: question,
+          game: game,
+        },
+        {
+          headers: {
+            "session-id": sessionId,
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chatRecords", game] });
+    },
+  });
+
+  const historyResponse = useQuery({
+    queryKey: ["chatRecords", game],
+    queryFn: async () =>
+      axios.get(`http://localhost:8013/games/${game}/history`, {
+        headers: {
+          "session-id": sessionId,
+        },
+      }),
+  });
+
+  const chatRecords = historyResponse.data?.data.records;
 
   const handleChangeGame = (game: string) => {
     setGame(game);
-
-    setChatRecords([]);
   };
 
   return (
@@ -52,9 +79,10 @@ function App() {
       <Stack spacing={2}>
         <ChatHistory chatRecords={chatRecords} />
         <ChatInput
-          onQuestion={handleNewQuestion}
+          onQuestion={askQuestionMutation.mutate}
           value={chatInput}
           setValue={setChatInput}
+          isQuestionPending={askQuestionMutation.isPending}
         />
       </Stack>
     </>

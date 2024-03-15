@@ -1,5 +1,5 @@
 /wiki/Valheim_Wiki : Traceback (most recent call last):
-  File "/home/simon/projects/chatbot_fandom/ingest/parser/__init__.py", line 44, in parse_wiki
+  File "/home/simon/projects/chatbot_fandom/ingest/parser/__init__.py", line 47, in parse_wiki
     scraped_page = scraper.scrape()
                    ^^^^^^^^^^^^^^^^
   File "/home/simon/projects/chatbot_fandom/ingest/parser/scrapers/page_scraper.py", line 48, in scrape
@@ -9,7 +9,7 @@ KeyError: 'categories'
 
 -------------------------------------------------------------------------
 /wiki/Category:Valheim_Wiki : Traceback (most recent call last):
-  File "/home/simon/projects/chatbot_fandom/ingest/parser/__init__.py", line 44, in parse_wiki
+  File "/home/simon/projects/chatbot_fandom/ingest/parser/__init__.py", line 47, in parse_wiki
     scraped_page = scraper.scrape()
                    ^^^^^^^^^^^^^^^^
   File "/home/simon/projects/chatbot_fandom/ingest/parser/scrapers/page_scraper.py", line 48, in scrape

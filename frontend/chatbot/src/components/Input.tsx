@@ -5,10 +5,12 @@ export const ChatInput = ({
   onQuestion,
   value,
   setValue,
+  isQuestionPending,
 }: {
-  onQuestion: (question: string) => void;
+  onQuestion: ({ question }: { question: string }) => void;
   value: string;
   setValue: (value: string) => void;
+  isQuestionPending: boolean;
 }) => {
   return (
     <TextField
@@ -20,7 +22,11 @@ export const ChatInput = ({
       placeholder="Type your question here"
       variant="outlined"
       InputProps={{
-        endAdornment: value ? "Send" : undefined,
+        endAdornment: isQuestionPending
+          ? "Pending ..."
+          : value
+            ? "Send"
+            : undefined,
         sx: {
           borderRadius: 3,
           border: 2,
@@ -28,7 +34,7 @@ export const ChatInput = ({
       }}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
-          onQuestion(value);
+          onQuestion({ question: value });
           setValue("");
           e.preventDefault();
         }

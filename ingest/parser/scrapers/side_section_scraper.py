@@ -43,7 +43,9 @@ class SideSectionScraper(Scraper):
         if not value_children:
             return result + children[1].text.strip() + "  \n"
 
-        txt_children = [child.text.strip() for child in value_children if child.name == "a"]
+        txt_children = [
+            child.text.strip() for child in value_children if child.name == "a"
+        ]
 
         result += ", ".join(txt_children)
 

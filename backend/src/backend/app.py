@@ -1,6 +1,8 @@
 from fastapi import FastAPI
-from backend.ask import router
+from backend.routes.ask import router as ask_router
+from backend.routes.history import router as history_router
 from fastapi.middleware.cors import CORSMiddleware
+
 
 def create_app():
     app = FastAPI()
@@ -13,6 +15,7 @@ def create_app():
         allow_headers=["*"],
     )
 
-    app.include_router(router)
+    app.include_router(ask_router)
+    app.include_router(history_router)
 
     return app
