@@ -13,7 +13,9 @@ BATCH_SIZE = 50
 async def parse_wiki(domain: str) -> list[Page]:
     client = FandomClient(domain)
 
-    links = (await get_all_page_links(client))
+    # links = (await get_all_page_links(client))
+
+    links = ["https://valheim.fandom.com/wiki/Bronze_sword"]
 
     seen_urls = set()
 
@@ -51,6 +53,9 @@ async def parse_wiki(domain: str) -> list[Page]:
             try:
                 scraper = PageScraper(page.html)
                 scraped_page = scraper.scrape()
+                from pprint import pprint
+                print('RESULT')
+                pprint(scraped_page.content)
                 pages.append(
                     Page(
                         str_content=scraped_page.str_content,

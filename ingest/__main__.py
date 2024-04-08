@@ -11,6 +11,7 @@ from ingest.ingestors.openai import Embedder
 from ingest.ingest_models import EmbeddedPage, EmbeddedChunk
 from functools import wraps
 from models.mongo import Page as MongoPage, Chunk as MongoChunk
+from rich.progress import track
 
 
 # https://github.com/pallets/click/issues/85

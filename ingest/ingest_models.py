@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
-
+from typing import Any
 
 @dataclass
 class Ref:
@@ -23,18 +23,21 @@ class Line:
 class Paragraph:
     lines: list[Line]
 
+@dataclass
+class List:
+    elements: list[list[Text | Ref]]
 
 @dataclass
 class TableRow:
-    cells: list[Text | Ref]
-
+    cells: list[list[Any]]
 
 @dataclass
 class Table:
     rows: list[TableRow]
 
 
-PageContent = list[Paragraph | Table]
+PageContent = list[Text | Ref | List | Table]
+
 
 
 class PageMetadata(BaseModel):

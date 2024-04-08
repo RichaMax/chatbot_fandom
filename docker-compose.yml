@@ -8,10 +8,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5173:5173
-  
+
   backend:
-    volumes:
-      - ./backend:/app
+    # volumes:
+    #   - ./backend:/app
     build:
       context: ./backend/
       dockerfile: Dockerfile
@@ -20,12 +20,12 @@ services:
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
-  
+
   cache:
     image: redis:7.2
     ports:
       - 6379:6379
-  
+
   mongodb:
     image: mongodb/mongodb-community-server:latest
     ports:
