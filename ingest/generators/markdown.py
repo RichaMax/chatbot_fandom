@@ -32,10 +32,14 @@ def render_list(elements: List) -> str:
 
 def render_table(table: Table) -> str:
     result = ""
+    if not table.rows:
+        return ""
     header_row = table.rows[0]
     headers = [render(header).strip() for header in header_row.cells]
     result += "| " + " | ".join(headers) + " |\n"
     result += "| " + " | ".join("-"*len(header) for header in headers) + " |\n"
+    if len(table.rows) == 1:
+        return result
     for row in table.rows[1:]:
         rendered_row = [render(element).strip() for element in row.cells]
         result += "|" + " | ".join(rendered_row) + " |\n"

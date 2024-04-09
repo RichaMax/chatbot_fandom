@@ -1,42 +1,45 @@
-from pydantic import BaseModel
-from pydantic.dataclasses import dataclass
-from typing import Any
+from pydantic import BaseModel, Field
+from typing import Annotated, Any, Literal
 
-@dataclass
-class Ref:
+class Ref(BaseModel): 
     # we will have issues with redirects there
     link: str
     text: str
+    type: Literal['ref'] = "ref"
 
-
-@dataclass
-class Text:
+class Header(BaseModel):
     content: str
+    level: int
+    type: Literal["header"] = "header"
+
+class Text(BaseModel):
+    content: str
+    type: Literal["text"] = "text"
 
 
-@dataclass
-class Line:
-    content: list[Text | Ref]
+# @dataclass
+# class Line:
+#     line_content: list[Text | Ref]
 
 
-@dataclass
-class Paragraph:
-    lines: list[Line]
+# @dataclass
+# class Paragraph:
+#     lines: list[Line]
 
-@dataclass
-class List:
+class List(BaseModel):
     elements: list[list[Text | Ref]]
+    type: Literal['list'] = "list"
 
-@dataclass
-class TableRow:
+class TableRow(BaseModel):
     cells: list[list[Any]]
+    type: Literal['table_row'] = "table_row"
 
-@dataclass
-class Table:
+class Table(BaseModel):
+    type: Literal['table'] = "table"
     rows: list[TableRow]
 
-
-PageContent = list[Text | Ref | List | Table]
+PageElement = Annotated[Header | Text | Ref | List | Table, Field(..., discriminator='type')]
+PageContent = list[PageElement]
 
 
 
@@ -50,7 +53,6 @@ class ScrappedPage(BaseModel):
     title: str
     categories: list[str]
     content: PageContent
-    str_content: str
 
 
 class Page(BaseModel):

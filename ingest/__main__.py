@@ -5,14 +5,18 @@ import hashlib
 from time import time
 
 from ingest.generators.markdown import render
-from ingest.parser import parse_wiki
 from ingest.ingestors.mongodb import MongoIngestor
 from ingest.ingestors.pinecone import PineconeIngestor
 from ingest.ingestors.openai import Embedder
 from ingest.ingest_models import EmbeddedPage, EmbeddedChunk
 from functools import wraps
+from ingest_models import Page, PageMetadata
 from models.mongo import Page as MongoPage, Chunk as MongoChunk
 from rich.progress import track
+from scraper import scrape_pages
+from scraper.client import FandomClient
+from scraper.page_lister import get_all_page_links, get_links_from_page
+import re
 
 
 # https://github.com/pallets/click/issues/85
@@ -22,6 +26,9 @@ def coro(f):
         return asyncio.run(f(*args, **kwargs))
 
     return wrapper
+
+
+URL_REGEX = re.compile(r"https://([a-z]*)\.fandom\.com(.*)")
 
 
 @click.command()
@@ -40,14 +47,48 @@ async def entrypoint(
         return
 
     if domain:
-        pages = await parse_wiki(domain)
+        fandom_client = FandomClient(domain)
+        urls = await get_all_page_links(fandom_client)
     elif url:
-        raise NotImplementedError("TODO: Implement parsing a single page")
-    
-    print("PAGES")
-    print(pages)
-    for page in pages:
-        print(render(page.content))
+        re_result = URL_REGEX.search(url)
+        domain = re_result.group(1)
+        relative_url = re_result.group(2)
+        urls = [relative_url]
+        fandom_client = FandomClient(domain)
+
+    scraped_pages = await scrape_pages(fandom_client, urls)
+
+    for page in scraped_pages:
+        try:
+            rendered = render(page.content)
+            print(rendered)
+            page = Page(
+            str_content=render(page.content),
+            content=[element.model_dump() for element in page.content],
+            metadata=PageMetadata(
+                title=page.title,
+                categories=page.categories,
+                url=""
+            ),
+        )
+        except Exception as e:
+            print(page.title)
+            print(page.content)
+            print(e)
+            print("---"*10)
+
+    pages = [
+        Page(
+            str_content=render(page.content),
+            content=[element.model_dump() for element in page.content],
+            metadata=PageMetadata(
+                title=page.title,
+                categories=page.categories,
+                url=""
+            ).model_dump(),
+        )
+        for page in scraped_pages
+    ]
 
     game = domain if domain is not None else url.split("/")[2]
 
@@ -75,7 +116,7 @@ async def entrypoint(
 
     embedded_pages = [
         EmbeddedPage(
-            metadata=page.metadata,
+            metadata=page.metadata.model_dump(),
             chunks=[
                 EmbeddedChunk(
                     id=hashlib.sha256(page.metadata.title.encode("utf-8")).hexdigest()[
