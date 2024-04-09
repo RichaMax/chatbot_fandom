@@ -1,7 +1,6 @@
 from ingest.ingest_models import Ref, Text, List, Table, PageContent
 
 def render(page_content: PageContent) -> str:
-    print(f"RENDERING {page_content}")
     result = ""
 
     for element in page_content:
@@ -34,11 +33,11 @@ def render_list(elements: List) -> str:
 def render_table(table: Table) -> str:
     result = ""
     header_row = table.rows[0]
-    headers = [render(header) for header in header_row.cells]
+    headers = [render(header).strip() for header in header_row.cells]
     result += "| " + " | ".join(headers) + " |\n"
     result += "| " + " | ".join("-"*len(header) for header in headers) + " |\n"
     for row in table.rows[1:]:
-        rendered_row = [render(element) for element in row.cells]
+        rendered_row = [render(element).strip() for element in row.cells]
         result += "|" + " | ".join(rendered_row) + " |\n"
     
     return result

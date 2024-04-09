@@ -7,10 +7,11 @@ from functools import reduce
 HEADER_REGEX = re.compile("^h[1-6]$")
 
 def parse_element(html_element, indentation=0):
+    if html_element is None:
+        return []
     match html_element.name:
         case 'table':
-            print(html_element['class'])
-            if 'navbox' in html_element['class']:
+            if 'class' in html_element and 'navbox' in html_element:
                 return []
             return [read_table(html_element)]
             return extract_table(html_element)

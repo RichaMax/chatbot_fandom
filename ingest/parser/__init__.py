@@ -15,7 +15,7 @@ async def parse_wiki(domain: str) -> list[Page]:
 
     # links = (await get_all_page_links(client))
 
-    links = ["https://valheim.fandom.com/wiki/Bronze_sword"]
+    links = ["https://valheim.fandom.com/wiki/Weapons"]
 
     seen_urls = set()
 
