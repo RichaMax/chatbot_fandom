@@ -4,6 +4,7 @@ import click
 import hashlib
 from time import time
 
+from ingest.generators.markdown import render
 from ingest.parser import parse_wiki
 from ingest.ingestors.mongodb import MongoIngestor
 from ingest.ingestors.pinecone import PineconeIngestor
@@ -42,6 +43,11 @@ async def entrypoint(
         pages = await parse_wiki(domain)
     elif url:
         raise NotImplementedError("TODO: Implement parsing a single page")
+    
+    print("PAGES")
+    print(pages)
+    for page in pages:
+        print(render(page.content))
 
     game = domain if domain is not None else url.split("/")[2]
 

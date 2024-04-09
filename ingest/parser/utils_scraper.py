@@ -7,11 +7,8 @@ from functools import reduce
 HEADER_REGEX = re.compile("^h[1-6]$")
 
 def parse_element(html_element, indentation=0):
-    # print(f'called parse element for {html_element.name}')
-
     match html_element.name:
         case 'table':
-            print('ENTERED TABLE')
             print(html_element['class'])
             if 'navbox' in html_element['class']:
                 return []
@@ -20,7 +17,6 @@ def parse_element(html_element, indentation=0):
         case 'ul' | 'ol':
             return [List(elements=[parse_element(child) for child in html_element.find_all(recursive=False)])]
         case 'a':
-            print('ENTERED A')
             if html_element['href'] is not None:
                 return [Ref(text=extract_a(html_element), link=html_element['href'])]
             else:
@@ -28,7 +24,6 @@ def parse_element(html_element, indentation=0):
         case x if HEADER_REGEX.match(x):
             return [Text(content=extract_header(html_element))]
         case _:
-            print('FALLBACK')
             children = html_element.contents
             if children:
                 child_text_list = [
@@ -38,9 +33,6 @@ def parse_element(html_element, indentation=0):
                 ]
                 return reduce(lambda x,y: x + y ,child_text_list, [])
             else:
-                print(html_element.name)
-                print(format_raw_text(html_element))
-                print('-----'*4)
                 return [Text(content=format_raw_text(html_element))]
 
 
