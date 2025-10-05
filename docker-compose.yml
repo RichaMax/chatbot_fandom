@@ -21,14 +21,13 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
 
-  cache:
-    image: redis:7.2
+  database:
+    image: postgres:18.0
     ports:
-      - 6379:6379
+      - 5432:5432
 
-  mongodb:
-    image: mongodb/mongodb-community-server:latest
+  vectordb:
+    image: qdrant/qdrant:v1.15
     ports:
-      - 27017:27017
-    # volumes:
-    #   - databases/mongodb/data:/data/db
+      - 6333:6333
+      - 6334:6334

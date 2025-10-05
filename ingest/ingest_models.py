@@ -46,6 +46,7 @@ PageContent = list[PageElement]
 class PageMetadata(BaseModel):
     title: str
     url: str
+    checksum: str
     categories: list[str]
 
 

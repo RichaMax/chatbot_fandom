@@ -3,9 +3,6 @@ name = "ingest"
 version = "0.1.0"
 requires-python = ">= 3.13"
 description = "Add your description here"
-authors = [
-    { name = "simonadi", email = "viknesh.adi@gmail.com" }
-]
 dependencies = [
     "beautifulsoup4>=4.12.3",
     "httpx>=0.27.0",
@@ -18,5 +15,7 @@ dependencies = [
     "pydantic-settings>=2.2.1",
     "pymongo>=4.6.2",
     "rich>=13.7.1",
+    "sqlalchemy>=2.0.43",
+    "clients",
 ]
 readme = "README.md"

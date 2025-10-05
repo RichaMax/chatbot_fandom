@@ -1,6 +1,6 @@
 from openai import AsyncOpenAI
 from pydantic_settings import BaseSettings
-from ingest.utils import cut_batches
+from utils import cut_batches
 import itertools
 import asyncio
 
@@ -15,7 +15,7 @@ class Embedder:
         settings = Settings()
         self.client = AsyncOpenAI(api_key=settings.openai_api_key)
 
-    async def embed(self, content: list[str]) -> list[float]:
+    async def embed(self, content: list[str]) -> list[list[float]]:
         batches = cut_batches(content, batch_size=50)
 
         return [

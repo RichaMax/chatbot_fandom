@@ -12,6 +12,8 @@ let
       unstable.uv
       unstable.python313
       unstable.yarn
+      unstable.pyright
+      unstable.ruff
     ];
     nativeBuildInputs = with pkgs; [ unstable.pkg-config unstable.rustup];
     buildInputs = with pkgs; [ unstable.openssl ];

@@ -7,8 +7,8 @@ from pydantic_settings import BaseSettings
 from pydantic import BaseModel
 
 from models.pinecone import ChunkMetadata
-from ingest.ingest_models import EmbeddedPage
-from ingest.utils import cut_batches
+from ingest_models import EmbeddedPage
+from utils import cut_batches
 from rich.progress import track
 
 
