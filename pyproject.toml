@@ -1,6 +1,11 @@
-[tool.mypy]
-plugins = ["pydantic.mypy"]
-
-[[tool.mypy.overrides]]
-module = ["result", "tqdm.*", "pinecone", "pymongo"]
-ignore_missing_imports = true
+[project]
+name = "chatbot-fandom"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+  "result",
+  "pinecone",
+  "pymongo",
+]
