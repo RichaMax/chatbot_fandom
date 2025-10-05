@@ -1,0 +1,34 @@
+services:
+  frontend:
+    volumes:
+      - ./frontend/chatbot:/app
+      # - /app/node_modules
+    build:
+      context: ./frontend/chatbot
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+
+  backend:
+    # volumes:
+    #   - ./backend:/app
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    ports:
+      - 8013:8013
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+
+  cache:
+    image: redis:7.2
+    ports:
+      - 6379:6379
+
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    ports:
+      - 27017:27017
+    # volumes:
+    #   - databases/mongodb/data:/data/db

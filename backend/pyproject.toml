@@ -1,0 +1,32 @@
+[project]
+name = "backend"
+version = "0.1.0"
+requires-python = ">=3.13"
+description = "Add your description here"
+authors = [
+    { name = "simonadi", email = "viknesh.adi@gmail.com" }
+]
+dependencies = [
+    "fastapi>=0.109.2",
+    "uvicorn>=0.27.1",
+    "openai>=1.12.0",
+    "pinecone>=7.3.0",
+    "pydantic-settings>=2.2.1",
+    "pymongo>=4.6.2",
+    "redis>=5.0.2",
+]
+readme = "README.md"
+
+# [tool.rye.scripts]
+# start-dev = "uvicorn --app-dir src --host 0.0.0.0 --port 8013 --factory backend.app:create_app --reload"
+# start = "uvicorn --app-dir src --host 0.0.0.0 -port 8013 --factory backend.app:create_app"
+
+# [build-system]
+# requires = ["hatchling"]
+# build-backend = "hatchling.build"
+
+# [tool.hatch.metadata]
+# allow-direct-references = true
+
+# [tool.hatch.build.targets.wheel]
+# packages = ["src/backend"]

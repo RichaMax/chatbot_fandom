@@ -1,16 +1,13 @@
-lint:
-    - poetry run ruff  --fix .
-    - poetry run mypy .
+set dotenv-load
 
-format:
-    poetry run ruff format . 
+root := justfile_directory()
 
-test:
-    poetry run pytest tests
 
-parse *ARGS:
-    poetry run parse {{ARGS}}
+@up:
+    docker compose up --force-recreate
 
-install:
-    poetry install
-    poetry run mypy --install-types .
+@down:
+    docker compose down
+
+ingest *ARGS:
+    PYTHONPATH={{root}} {{root}}/ingest/.venv/bin/python ingest {{ARGS}}
