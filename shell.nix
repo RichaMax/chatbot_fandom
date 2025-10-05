@@ -10,7 +10,7 @@ let
       unstable.docker
       unstable.just
       unstable.uv
-      unstable.python314
+      unstable.python313
       unstable.yarn
     ];
     nativeBuildInputs = with pkgs; [ unstable.pkg-config unstable.rustup];

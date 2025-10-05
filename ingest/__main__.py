@@ -4,11 +4,11 @@ import click
 import hashlib
 from time import time
 
-from ingest.generators.markdown import render
-from ingest.ingestors.mongodb import MongoIngestor
-from ingest.ingestors.pinecone import PineconeIngestor
-from ingest.ingestors.openai import Embedder
-from ingest.ingest_models import EmbeddedPage, EmbeddedChunk
+from generators.markdown import render
+from ingestors.mongodb import MongoIngestor
+from ingestors.pinecone import PineconeIngestor
+from ingestors.openai import Embedder
+from ingest_models import EmbeddedPage, EmbeddedChunk
 from functools import wraps
 from ingest_models import Page, PageMetadata
 from models.mongo import Page as MongoPage, Chunk as MongoChunk
