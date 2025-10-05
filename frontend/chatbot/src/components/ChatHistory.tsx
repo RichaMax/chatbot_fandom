@@ -58,7 +58,7 @@ export const ChatHistory = ({ chatRecords }: { chatRecords: ChatRecords }) => {
       >
         <Box flexGrow={1} />
         <Stack spacing={2} direction="column">
-          {chatRecords.map((record) => {
+          {chatRecords?.map((record) => {
             // return <ChatRecord game={game} question={record.question} />;
             return (
               <>
