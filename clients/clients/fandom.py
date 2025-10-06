@@ -1,7 +1,6 @@
 import httpx
 from pydantic.dataclasses import dataclass
 from bs4 import BeautifulSoup
-from .urls import get_domain_url
 
 
 @dataclass
@@ -9,6 +8,12 @@ class HtmlResult:
     url: str
     html: str
 
+def get_domain_url(domain: str) -> str:
+    return f"https://{domain}.fandom.com"
+
+
+def get_sanitized_page_name_from_url(page_url: str) -> str:
+    return page_url.split("wiki/")[-1].replace("/", "-")
 
 class FandomClient:
     def __init__(self, domain: str) -> None:

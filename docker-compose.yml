@@ -18,13 +18,15 @@ services:
     ports:
       - 8013:8013
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
 
   database:
     image: postgres:18.0
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   vectordb:
     image: qdrant/qdrant:v1.15

@@ -1,4 +1,4 @@
-from ingest_models import Ref, Text, List, Table, PageContent
+from models import Ref, Text, List, Table, PageContent
 
 
 def render(page_content: PageContent) -> str:

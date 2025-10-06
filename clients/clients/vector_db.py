@@ -27,5 +27,10 @@ class VectorDatabase:
             ]
         )
     
-    async def get_top_neighbours(self, n: int, embedding: list[float]) -> uuid.UUID:
-        return uuid.uuid4()
+    async def get_top_neighbours(
+        self,
+        collection: str,
+        embedding: list[float],
+        top_n: int = 5
+    ) -> list[uuid.UUID]:
+        return [uuid.uuid4()]

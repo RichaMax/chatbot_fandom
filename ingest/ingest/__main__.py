@@ -9,12 +9,11 @@ from typing import Iterator
 import clients
 
 from generators import markdown
-from ingestors.openai import Embedder
 from functools import wraps
-from ingest_models import Page, PageMetadata, ChunkedPage
+from models import Page, PageMetadata, ChunkedPage
 from rich.progress import track, Progress, SpinnerColumn, TimeElapsedColumn, TextColumn
 from parser import parse_page
-from parser.client import FandomClient
+from clients.fandom import FandomClient
 import re
 
 
@@ -79,7 +78,7 @@ async def entrypoint(
     vector_db = clients.vector_db.VectorDatabase()
     await vector_db.get_or_create_collection(game)
     db = clients.database.Database()
-
+    embedder = clients.embedder.Embedder()
 
     pages_html = [
         await fandom_client.get_html(url)
@@ -89,6 +88,8 @@ async def entrypoint(
         hashlib.md5(html_result.html.encode())
         for html_result in track(pages_html, description="Hashing pages...")
     ]
+    # FIX: Works until this exit
+    exit()
     db_checksums = await db.get_checksums_by_urls(urls)
     pages_to_parse = [
         page_html
@@ -111,7 +112,6 @@ async def entrypoint(
     chunks = [chunk for page in chunked_pages for chunk in page.chunks]
 
     with spinner("Embedding..."):
-        embedder = Embedder()
         embeddings = await embedder.embed([chunk.content for chunk in chunks])
     
     with spinner("Storing embeddings..."):
