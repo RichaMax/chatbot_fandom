@@ -15,7 +15,7 @@ from models.mongo import Page as MongoPage, Chunk as MongoChunk
 from rich.progress import track
 from scraper import scrape_pages
 from scraper.client import FandomClient
-from scraper.page_lister import get_all_page_links, get_links_from_page
+from scraper.page_lister import get_all_page_links
 import re
 
 
@@ -63,28 +63,24 @@ async def entrypoint(
             rendered = render(page.content)
             print(rendered)
             page = Page(
-            str_content=render(page.content),
-            content=[element.model_dump() for element in page.content],
-            metadata=PageMetadata(
-                title=page.title,
-                categories=page.categories,
-                url=""
-            ),
-        )
+                str_content=render(page.content),
+                content=[element.model_dump() for element in page.content],
+                metadata=PageMetadata(
+                    title=page.title, categories=page.categories, url=""
+                ),
+            )
         except Exception as e:
             print(page.title)
             print(page.content)
             print(e)
-            print("---"*10)
+            print("---" * 10)
 
     pages = [
         Page(
             str_content=render(page.content),
             content=[element.model_dump() for element in page.content],
             metadata=PageMetadata(
-                title=page.title,
-                categories=page.categories,
-                url=""
+                title=page.title, categories=page.categories, url=""
             ).model_dump(),
         )
         for page in scraped_pages

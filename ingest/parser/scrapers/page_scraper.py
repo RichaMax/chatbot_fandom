@@ -11,7 +11,9 @@ class PageScraper(Scraper):
     def __init__(self, html: str):
         self.page_soup = bs4.BeautifulSoup(html, "html.parser")
 
-        for element in self.page_soup.find_all(text=lambda text:isinstance(text, bs4.Comment)):
+        for element in self.page_soup.find_all(
+            text=lambda text: isinstance(text, bs4.Comment)
+        ):
             if isinstance(element, bs4.Comment):
                 element.extract()
 

@@ -1,16 +1,19 @@
 from pydantic import BaseModel, Field
 from typing import Annotated, Any, Literal
 
-class Ref(BaseModel): 
+
+class Ref(BaseModel):
     # we will have issues with redirects there
     link: str
     text: str
-    type: Literal['ref'] = "ref"
+    type: Literal["ref"] = "ref"
+
 
 class Header(BaseModel):
     content: str
     level: int
     type: Literal["header"] = "header"
+
 
 class Text(BaseModel):
     content: str
@@ -26,21 +29,26 @@ class Text(BaseModel):
 # class Paragraph:
 #     lines: list[Line]
 
+
 class List(BaseModel):
     elements: list[list[Text | Ref]]
-    type: Literal['list'] = "list"
+    type: Literal["list"] = "list"
+
 
 class TableRow(BaseModel):
     cells: list[list[Any]]
-    type: Literal['table_row'] = "table_row"
+    type: Literal["table_row"] = "table_row"
+
 
 class Table(BaseModel):
-    type: Literal['table'] = "table"
+    type: Literal["table"] = "table"
     rows: list[TableRow]
 
-PageElement = Annotated[Header | Text | Ref | List | Table, Field(..., discriminator='type')]
-PageContent = list[PageElement]
 
+PageElement = Annotated[
+    Header | Text | Ref | List | Table, Field(..., discriminator="type")
+]
+PageContent = list[PageElement]
 
 
 class PageMetadata(BaseModel):

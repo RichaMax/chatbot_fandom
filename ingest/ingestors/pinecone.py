@@ -1,10 +1,7 @@
-import asyncio
 import time
 
-from openai import AsyncOpenAI
 from pinecone import Pinecone, ServerlessSpec, Vector
 from pydantic_settings import BaseSettings
-from pydantic import BaseModel
 
 from models.pinecone import ChunkMetadata
 from ingest.ingest_models import EmbeddedPage

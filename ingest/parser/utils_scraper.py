@@ -6,20 +6,28 @@ from functools import reduce
 
 HEADER_REGEX = re.compile("^h[1-6]$")
 
+
 def parse_element(html_element, indentation=0):
     if html_element is None:
         return []
     match html_element.name:
-        case 'table':
-            if 'class' in html_element and 'navbox' in html_element:
+        case "table":
+            if "class" in html_element and "navbox" in html_element:
                 return []
             return [read_table(html_element)]
             return extract_table(html_element)
-        case 'ul' | 'ol':
-            return [List(elements=[parse_element(child) for child in html_element.find_all(recursive=False)])]
-        case 'a':
-            if html_element['href'] is not None:
-                return [Ref(text=extract_a(html_element), link=html_element['href'])]
+        case "ul" | "ol":
+            return [
+                List(
+                    elements=[
+                        parse_element(child)
+                        for child in html_element.find_all(recursive=False)
+                    ]
+                )
+            ]
+        case "a":
+            if html_element["href"] is not None:
+                return [Ref(text=extract_a(html_element), link=html_element["href"])]
             else:
                 return [Text(content=extract_a(html_element))]
         case x if HEADER_REGEX.match(x):
@@ -28,11 +36,13 @@ def parse_element(html_element, indentation=0):
             children = html_element.contents
             if children:
                 child_text_list = [
-                    [Text(content=child)] if isinstance(child, str) else parse_element(child, indentation)
+                    [Text(content=child)]
+                    if isinstance(child, str)
+                    else parse_element(child, indentation)
                     for child in children
                     if not ignore_element(child)
                 ]
-                return reduce(lambda x,y: x + y ,child_text_list, [])
+                return reduce(lambda x, y: x + y, child_text_list, [])
             else:
                 return [Text(content=format_raw_text(html_element))]
 
@@ -46,6 +56,7 @@ def ignore_element(child_element: bs4.element.Tag) -> bool:
     if child_element.name == "figure":
         return True
     return False
+
 
 def extract_a(a_html: bs4.element.Tag) -> str:
     return format_raw_text(a_html)
@@ -71,20 +82,18 @@ def extract_cell(html_cell: bs4.element.Tag) -> str:
 def visible_cell(html_cell: bs4.element.Tag) -> bool:
     return "display:none" not in html_cell.get("style", "")
 
+
 def read_table(html_table):
-    
     rows = []
-    raw_rows = html_table.find_all('tr')
+    raw_rows = html_table.find_all("tr")
 
     for raw_row in raw_rows:
-        raw_cells = raw_row.find_all(['th', 'td'])
+        raw_cells = raw_row.find_all(["th", "td"])
         cells = [extract_cell(raw_cell) for raw_cell in raw_cells]
 
         rows.append(TableRow(cells=cells))
-    
+
     return Table(rows=rows)
-
-
 
 
 def extract_table(html_table: bs4.element.Tag) -> str:

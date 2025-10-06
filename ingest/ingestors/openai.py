@@ -1,10 +1,10 @@
 from openai import AsyncOpenAI
 from pydantic_settings import BaseSettings
 from ingest.utils import cut_batches
-import itertools
 import asyncio
 
 MODEL = "text-embedding-3-small"
+
 
 class Settings(BaseSettings):
     openai_api_key: str
@@ -21,13 +21,13 @@ class Embedder:
         return [
             data.embedding
             for result in await asyncio.gather(
-                    *[
-                        self.client.embeddings.create(
-                            model=MODEL,
-                            input=batch,
-                        )
-                        for batch in batches
-                    ]
-                )
+                *[
+                    self.client.embeddings.create(
+                        model=MODEL,
+                        input=batch,
+                    )
+                    for batch in batches
+                ]
+            )
             for data in result.data
         ]

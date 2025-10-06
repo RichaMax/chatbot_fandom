@@ -18,5 +18,6 @@ dependencies = [
     "pydantic-settings>=2.2.1",
     "pymongo>=4.6.2",
     "rich>=13.7.1",
+    "ruff>=0.13.3",
 ]
 readme = "README.md"

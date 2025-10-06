@@ -54,6 +54,7 @@ async def parse_wiki(domain: str) -> list[Page]:
                 scraper = PageScraper(page.html)
                 scraped_page = scraper.scrape()
                 from pprint import pprint
+
                 pprint(scraped_page.content)
                 pages.append(
                     Page(
@@ -91,5 +92,4 @@ async def parse_wiki(domain: str) -> list[Page]:
     return pages
 
 
-def parse_url(url: str) -> Page:
-    ...
+def parse_url(url: str) -> Page: ...
