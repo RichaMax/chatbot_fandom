@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-# from models.db import User, Page, Chunk
+from .models import User, ChatRecord
 
 class Database:
     def __init__(self):
@@ -7,11 +7,14 @@ class Database:
 
     # ----- Pages -----
 
-    def store_chunked_page(self, chunked_page):
+    async def store_chunked_pages(self, chunked_pages):
         pass
 
     def get_chunk_content(self, chunk_id) -> str:
         return ""
+
+    async def get_checksums_by_urls(self, urls: list[str]) -> list[str | None]:
+        return []
 
     # ----- Chat -----
 

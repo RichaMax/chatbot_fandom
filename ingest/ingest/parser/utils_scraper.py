@@ -11,7 +11,9 @@ def parse_element(html_element, indentation=0):
 
     if hasattr(html_element, "children"):
         child_text_list = [
-            parse_element(child, indentation) for child in html_element.children if not ignore_child(child)
+            parse_element(child, indentation)
+            for child in html_element.children
+            if not ignore_child(child)
         ]
         full_text = "".join([child_txt for child_txt in child_text_list if child_txt])
     else:
@@ -60,7 +62,8 @@ def extract_table(html_table: bs4.element.Tag) -> str:
     # The tables at the end of articles that are not used for now have both
     # the "mw-collapsible" and "wikitable" classes
     if html_table.get("class", None) is None or all(
-        class_name in html_table["class"] for class_name in ("mw-collapsible", "wikitable")
+        class_name in html_table["class"]
+        for class_name in ("mw-collapsible", "wikitable")
     ):
         return ""
     html_rows = html_table.find_all("tr")
@@ -68,7 +71,11 @@ def extract_table(html_table: bs4.element.Tag) -> str:
 
     for row in html_rows:
         cells = row.find_all(["th", "td"])
-        row_str = "| " + " | ".join([extract_cell(cell) for cell in cells if visible_cell(cell)]) + " |\n"
+        row_str = (
+            "| "
+            + " | ".join([extract_cell(cell) for cell in cells if visible_cell(cell)])
+            + " |\n"
+        )
         table_str += row_str
         if cells[0].name == "th":
             header_separator = "|" + "---|" * len(cells) + "\n"

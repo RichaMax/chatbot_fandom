@@ -1,9 +1,7 @@
 from fastapi import APIRouter
 from backend.utils import CamelModel
-import redis.asyncio as redis
 from fastapi import Header
 from typing import Annotated
-from backend.io.redis import ChatRecord as RedisChatRecord
 
 router = APIRouter()
 
@@ -21,9 +19,7 @@ class ChatHistory(CamelModel):
 @router.get("/games/{game}/history")
 async def get_history(game: str, session_id: Annotated[str, Header()]):
     print(f"Sesssion ID: {session_id}")
-    client: redis.Redis = redis.Redis(host="cache")
-    records = await client.lrange(f"user:{session_id}:game:{game}", -20, -1)
-    records = [RedisChatRecord.parse_raw(record) for record in records]
+    # TODO: Get chat history from DB
     return ChatHistory(
         game=game,
         records=[
@@ -32,6 +28,6 @@ async def get_history(game: str, session_id: Annotated[str, Header()]):
                 answer=record.answer,
                 timestamp=record.timestamp,
             )
-            for record in records
+            for record in []
         ],
     )

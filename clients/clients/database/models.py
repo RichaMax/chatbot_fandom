@@ -1,5 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
+from datetime import datetime
 
 class Base(DeclarativeBase):
     pass
@@ -35,7 +36,7 @@ class User(Base):
     password_hash: Mapped[str]
 
 
-class Chat(Base):
+class ChatRecord(Base):
     __tablename__ = "chat"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -44,5 +45,6 @@ class Chat(Base):
     answer: Mapped[str]
 
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-
     user: Mapped["User"] = relationship(back_populates="chats")
+
+    created_at: Mapped[datetime]
