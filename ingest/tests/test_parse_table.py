@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from parser.utils_scraper import extract_table
+from scraper.utils_scraper import extract_table
 
 table_html = """
 <table class="article-table sortable mw-collapsible jquery-tablesorter mw-made-collapsible" style="text-align:center;">

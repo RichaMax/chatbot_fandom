@@ -1,6 +1,6 @@
 import bs4
 
-from ingest.parser.utils_scraper import parse_element
+from ingest.scraper.utils_scraper import parse_element
 from ingest.ingest_models import ScrappedPage, Text
 
 from .scraper import Scraper

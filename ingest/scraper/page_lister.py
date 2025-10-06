@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from parser.client import FandomClient
+from scraper.client import FandomClient
 
 
 async def get_all_page_links(client: FandomClient) -> list[str]:

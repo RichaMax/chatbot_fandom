@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from parser.utils_scraper import parse_element
+from scraper.utils_scraper import parse_element
 
 html_code = """
 <ul><li>At the time of release, Yagluth was the last boss to defeat.

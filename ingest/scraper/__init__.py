@@ -10,7 +10,7 @@ from rich.progress import track
 BATCH_SIZE = 50
 
 
-async def parse_wiki(domain: str) -> list[Page]:
+async def scrape(domain: str) -> list[Page]:
     client = FandomClient(domain)
 
     # links = (await get_all_page_links(client))
