@@ -1,3 +1,5 @@
+import bs4
+
 def parse_element(html_element, indentation=0):
     if html_element.name == "table":
         return extract_table(html_element)
